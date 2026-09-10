@@ -239,19 +239,17 @@ class JobStoreRepository {
     private var emergencyStopReason: String? = null
 
     init {
-        val emInstance = EmergencyStopManager.getInstance()
-        if (emInstance.isEmergencyStopActive()) {
+        if (EmergencyStopManager.isStopped.value) {
             emergencyStopActive = true
-            emergencyStopReason = emInstance.getStopReason()
+            emergencyStopReason = EmergencyStopManager.getReason()
         }
     }
 
     fun setEmergencyStop(active: Boolean, reason: String? = null) {
         emergencyStopActive = active
         emergencyStopReason = reason
-        val emInstance = EmergencyStopManager.getInstance()
         if (active) {
-            emInstance.triggerStop(reason ?: "Emergency Stop activated")
+            EmergencyStopManager.trigger(reason ?: "Emergency Stop activated")
             leases.clear()
             jobs.values.forEach { job ->
                 if (job.status == PersistentJobStatus.WAITING_FOR_APPROVAL || job.status == PersistentJobStatus.READY) {
@@ -266,7 +264,7 @@ class JobStoreRepository {
                 }
             }
         } else {
-            emInstance.reset()
+            EmergencyStopManager.reset()
         }
         recordAuditEvent(
             jobId = "SYSTEM",

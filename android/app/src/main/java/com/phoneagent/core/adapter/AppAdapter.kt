@@ -15,7 +15,9 @@ data class AdapterCapabilities(
 data class AdapterResult(
     val success: Boolean,
     val message: String,
-    val data: Map<String, String> = emptyMap()
+    val data: Map<String, String> = emptyMap(),
+    val requiresUserAction: Boolean = false,
+    val finalState: String? = null
 )
 
 interface AppAdapter {

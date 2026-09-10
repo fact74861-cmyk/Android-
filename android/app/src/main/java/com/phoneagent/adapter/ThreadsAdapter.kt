@@ -109,6 +109,16 @@ class ThreadsAdapter(
     fun getRecoveryAttempts(): Int = recoveryAttempts
 
     override suspend fun isInstalled(): Boolean = installed
+    override suspend fun launch(): Boolean = verifyThreads()
+    override suspend fun enterCaption(caption: String): Boolean = enterPostText(caption)
+    override suspend fun enterHashtags(hashtags: List<String>): Boolean = addHashtags(hashtags)
+    override suspend fun selectCover(coverUri: String): Boolean {
+        if (coverUri.isNotEmpty()) {
+            validateMediaUri(coverUri)
+        }
+        return true
+    }
+    override suspend fun verifyPreview(): Boolean = verifyMedia()
 
     /**
      * Verifies foreground package and checks for any active security tripwires.
@@ -412,7 +422,7 @@ class ThreadsAdapter(
      * Stage 2: DETECT_READY_STATE
      * Dynamically detects whether Threads is on main feed / navigation bar and ready.
      */
-    suspend fun detectReadyState(): Boolean {
+    override suspend fun detectReadyState(): Boolean {
         if (!verifyPackageAndSecurity("DETECT_READY_STATE")) return false
 
         val readyCandidates = listOf(
@@ -512,7 +522,7 @@ class ThreadsAdapter(
      * Stage 4: SELECT_MEDIA
      * Validates local URI and selects media attachment.
      */
-    suspend fun selectMedia(mediaUri: String): Boolean {
+    override suspend fun selectMedia(mediaUri: String): Boolean {
         if (!verifyPackageAndSecurity("SELECT_MEDIA")) return false
         validateMediaUri(mediaUri)
 
@@ -704,7 +714,7 @@ class ThreadsAdapter(
      * Stage 10: REQUEST_PUBLISH_APPROVAL
      * Transitions to WAITING_FOR_APPROVAL; enforces operator confirmation before publish.
      */
-    suspend fun requestPublishApproval(job: JobModel): Boolean {
+    override suspend fun requestPublishApproval(job: JobModel): Boolean {
         if (!verifyPackageAndSecurity("REQUEST_PUBLISH_APPROVAL")) return false
 
         currentJobId = job.jobId
@@ -817,7 +827,7 @@ class ThreadsAdapter(
      * Stage 12: VERIFY_PUBLICATION
      * Confirms post succeeded by searching for positive UI evidence (confirmation toasts/snackbars).
      */
-    suspend fun verifyPublished(): Boolean {
+    override suspend fun verifyPublished(): Boolean {
         if (!verifyPackageAndSecurity("VERIFY_PUBLICATION")) return false
 
         val successSignals = listOf(
@@ -876,7 +886,8 @@ class ThreadsAdapter(
      * Attempts bounded back navigation, re-inspection, or re-opening composer.
      * Maximum of 2 attempts before fail-stop.
      */
-    suspend fun recover(reason: String): Boolean {
+    override suspend fun recover(lastError: String): Boolean {
+        val reason = lastError
         if (isStopped || EmergencyStopManager.isStopped.value) {
             LocalActionLogger.log(
                 action = "RECOVERY_BLOCKED",

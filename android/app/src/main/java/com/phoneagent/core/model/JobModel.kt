@@ -33,6 +33,8 @@ enum class Platform(val id: String, val packageName: String) {
     AMAZON("amazon", "com.amazon.mShop.android.shopping")
 }
 
+typealias SupportedPlatform = Platform
+
 @Serializable
 data class JobModel(
     val jobId: String,

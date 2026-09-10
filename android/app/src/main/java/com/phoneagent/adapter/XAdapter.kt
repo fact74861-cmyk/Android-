@@ -100,7 +100,7 @@ class XAdapter(
         this.packageName = pkg
     }
 
-    fun setInstalled(status: boolean) {
+    fun setInstalled(status: Boolean) {
         this.installed = status
     }
 
