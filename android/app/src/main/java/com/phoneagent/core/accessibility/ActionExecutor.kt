@@ -7,7 +7,7 @@ interface ActionExecutor {
     suspend fun clearText(node: UiNodeInfo): Boolean = true
     suspend fun scroll(direction: ScrollDirection): Boolean
     suspend fun copyToClipboard(text: String): Boolean = true
-    suspend fun readClipboard(): String
+    suspend fun readClipboard(): String = ""
     suspend fun pressBack(): Boolean
 }
 
