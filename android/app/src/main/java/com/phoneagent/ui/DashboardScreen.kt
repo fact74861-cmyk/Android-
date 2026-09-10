@@ -394,7 +394,7 @@ private fun MasterWorkflowSection(
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        if (currentJob.jobState == JobState.WAITING_FOR_APPROVAL) {
+                        if (currentJobState == JobState.WAITING_FOR_APPROVAL) {
                             Spacer(modifier = Modifier.height(6.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(16.dp))
