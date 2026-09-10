@@ -68,4 +68,8 @@ object LocalActionLogger {
     }
 
     fun getAllLogs(): List<ActionLogEntry> = logList.toList()
+
+    fun getLogs(): List<ActionLogEntry> = logList.reversed()
+
+    fun getRecentLogs(limit: Int = 50): List<ActionLogEntry> = logList.take(limit)
 }

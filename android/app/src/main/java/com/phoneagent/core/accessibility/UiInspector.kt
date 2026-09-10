@@ -6,12 +6,12 @@ data class UiNodeInfo(
     val id: String,
     val text: String? = null,
     val contentDescription: String? = null,
-    val className: String,
-    val isClickable: Boolean,
-    val isEditable: Boolean,
-    val isVisible: Boolean,
-    val packageName: String,
-    val bounds: Rect
+    val className: String = "",
+    val isClickable: Boolean = false,
+    val isEditable: Boolean = false,
+    val isVisible: Boolean = true,
+    val packageName: String = "",
+    val bounds: Rect = Rect()
 )
 
 data class SecurityTripwireResult(

@@ -4,7 +4,7 @@ interface ActionExecutor {
     suspend fun click(node: UiNodeInfo): Boolean
     suspend fun clickAt(x: Int, y: Int): Boolean
     suspend fun typeText(node: UiNodeInfo, text: String): Boolean
-    suspend fun clearText(node: UiNodeInfo): Boolean
+    suspend fun clearText(node: UiNodeInfo): Boolean = true
     suspend fun scroll(direction: ScrollDirection): Boolean
     suspend fun copyToClipboard(text: String): Boolean
     suspend fun readClipboard(): String

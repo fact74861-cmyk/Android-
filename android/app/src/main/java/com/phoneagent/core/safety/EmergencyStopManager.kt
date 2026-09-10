@@ -8,6 +8,9 @@ object EmergencyStopManager {
     private val _isStopped = MutableStateFlow(false)
     val isStopped: StateFlow<Boolean> = _isStopped.asStateFlow()
 
+    private val _lastReason = MutableStateFlow("")
+    val lastReason: StateFlow<String> = _lastReason.asStateFlow()
+
     private var stopReason: String = ""
     private var stopTimestamp: Long = 0L
 
@@ -15,16 +18,25 @@ object EmergencyStopManager {
     fun trigger(reason: String = "User Emergency Stop") {
         _isStopped.value = true
         stopReason = reason
+        if (_lastReason.value.isEmpty()) {
+            _lastReason.value = reason
+        }
         stopTimestamp = System.currentTimeMillis()
     }
 
     @Synchronized
-    fun activate(reason: String = "User Emergency Stop") = trigger(reason)
+    fun activate(reason: String = "User Emergency Stop") {
+        _isStopped.value = true
+        stopReason = reason
+        _lastReason.value = reason
+        stopTimestamp = System.currentTimeMillis()
+    }
 
     @Synchronized
     fun reset() {
         _isStopped.value = false
         stopReason = ""
+        _lastReason.value = ""
         stopTimestamp = 0L
     }
 

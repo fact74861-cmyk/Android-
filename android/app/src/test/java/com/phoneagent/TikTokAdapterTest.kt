@@ -60,6 +60,11 @@ private class TikTokFakeActionExecutor : ActionExecutor {
         return true
     }
 
+    override suspend fun clearText(node: UiNodeInfo): Boolean {
+        executionLog.add("clearText:${node.id}")
+        return true
+    }
+
     override suspend fun scroll(direction: ScrollDirection): Boolean {
         executionLog.add("scroll:${direction.name}")
         return true
