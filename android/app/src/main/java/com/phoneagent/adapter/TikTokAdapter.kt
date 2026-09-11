@@ -151,15 +151,17 @@ class TikTokAdapter(
 
     private suspend fun checkTikTokSpecificTripwires(actionName: String) {
         val forbiddenKeywords = listOf(
-            // Auth / Login
-            "log in",
-            "sign up",
-            "log in to tiktok",
-            "welcome to tiktok",
-            "sign in with google",
-            "sign in with facebook",
-            "continue with phone",
-            "use phone / email / username",
+            // Account Switcher & Identity Verification
+            "switch account",
+            "add account",
+            "choose an account",
+            "manage accounts",
+            "switch profile",
+            "log into another account",
+            "verify your identity",
+            "id verification",
+            "age verification",
+            "identity check",
             // Passwords & PINs
             "enter password",
             "password",
@@ -187,18 +189,17 @@ class TikTokAdapter(
             "account recovery",
             "reset password",
             "find account",
-            // Account Switcher & Identity Verification
-            "switch account",
-            "add account",
-            "choose an account",
-            "manage accounts",
-            "switch profile",
-            "log into another account",
-            "verify your identity",
-            "id verification",
-            "age verification",
-            "identity check",
             // Payment, Wallet, Coins & Promote / Boost Flow
+            "recharge coins",
+            "buy coins",
+            "tiktok coins",
+            "recharge",
+            "coins",
+            "promote video",
+            "boost post",
+            "promote",
+            "ad budget",
+            "order total",
             "payment",
             "credit card",
             "debit card",
@@ -208,16 +209,15 @@ class TikTokAdapter(
             "balance",
             "add payment method",
             "pay now",
-            "recharge coins",
-            "buy coins",
-            "tiktok coins",
-            "recharge",
-            "coins",
-            "promote",
-            "boost post",
-            "promote video",
-            "ad budget",
-            "order total"
+            // Auth / Login
+            "log in to tiktok",
+            "welcome to tiktok",
+            "sign in with google",
+            "sign in with facebook",
+            "continue with phone",
+            "use phone / email / username",
+            "sign up",
+            "log in"
         )
 
         val nodes = inspector.dumpNodeTree()
@@ -697,10 +697,12 @@ class TikTokAdapter(
      * 12. PUBLISH
      */
     override suspend fun publish(): AdapterResult {
-        if (isStopped) {
+        if (isStopped || EmergencyStopManager.isStopped.value) {
             return AdapterResult(false, "Automation was stopped before publishing.")
         }
-        verifyPackageAndSecurity("PUBLISH")
+        if (!verifyPackageAndSecurity("PUBLISH")) {
+            return AdapterResult(false, "Automation was stopped before publishing.")
+        }
 
         val postBtn = inspector.findNodesByText("Post").firstOrNull()
             ?: inspector.findNodeByContentDescription("Post")
