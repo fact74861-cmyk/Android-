@@ -896,10 +896,12 @@ class PinterestAdapter(
      * 14. PUBLISH
      */
     override suspend fun publish(): AdapterResult {
-        if (isStopped) {
-            return AdapterResult(success = false, message = "Automation was stopped before publishing.")
+        if (isStopped || EmergencyStopManager.isStopped.value) {
+            return AdapterResult(success = false, message = "Emergency Stop active or PinterestAdapter stopped before publishing.")
         }
-        verifyPackageAndSecurity("PUBLISH")
+        if (!verifyPackageAndSecurity("PUBLISH")) {
+            return AdapterResult(success = false, message = "Emergency Stop active or PinterestAdapter stopped before publishing.")
+        }
 
         val publishBtn: UiNodeInfo = inspector.findNodesByText("Save").firstOrNull()
             ?: inspector.findNodesByText("Create Pin").firstOrNull()
@@ -941,8 +943,8 @@ class PinterestAdapter(
      * 15. VERIFY_PUBLICATION
      */
     override suspend fun verifyPublished(): Boolean {
-        if (isStopped) return false
-        verifyPackageAndSecurity("VERIFY_PUBLICATION")
+        if (isStopped || EmergencyStopManager.isStopped.value) return false
+        if (!verifyPackageAndSecurity("VERIFY_PUBLICATION")) return false
 
         val nodes = inspector.dumpNodeTree()
 
