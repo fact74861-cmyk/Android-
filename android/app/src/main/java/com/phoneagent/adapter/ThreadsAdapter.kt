@@ -326,7 +326,9 @@ class ThreadsAdapter(
         val normalized = raw
             .replace("\r\n", "\n")
             .replace("\r", "\n")
-            .replace(Regex("[ \\t]+"), " ")
+            .split("\n")
+            .map { line -> line.replace(Regex("[ \\t]+"), " ").trim() }
+            .joinToString("\n")
             .replace(Regex("\\n{3,}"), "\n\n")
             .trim()
 
