@@ -359,21 +359,19 @@ class LinkedInAdapter(
         val existingNormalized = (existingText ?: "").lowercase()
 
         for (raw in rawHashtags) {
-            var tag = raw.trim()
-            if (tag.isEmpty()) continue
-            if (!tag.startsWith("#")) {
-                tag = "#$tag"
-            }
-            if (tag == "#") continue
+            val trimmed = raw.trim()
+            if (trimmed.isEmpty()) continue
 
-            val cleanTag = "#" + tag.substring(1).replace(Regex("[\\s#]"), "")
-            if (cleanTag.length <= 1) continue
+            val rawBody = trimmed.trimStart('#')
+            val cleanBody = rawBody.replace(Regex("[^\\p{L}\\p{N}]"), "")
+            if (cleanBody.isEmpty()) continue
 
+            val cleanTag = "#$cleanBody"
             val lowerKey = cleanTag.lowercase()
             if (seen.contains(lowerKey)) continue
 
             // Exclude if already present in body text
-            if (existingNormalized.contains(lowerKey)) {
+            if (existingNormalized.isNotEmpty() && existingNormalized.contains(lowerKey)) {
                 continue
             }
 
