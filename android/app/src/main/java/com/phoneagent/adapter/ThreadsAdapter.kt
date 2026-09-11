@@ -498,7 +498,8 @@ class ThreadsAdapter(
                 level = LogLevel.WARN,
                 safetyVerified = false
             )
-            return recover("Composer trigger button not found")
+            recover("Composer trigger button not found")
+            return false
         }
 
         executor.click(triggerNode)
@@ -506,7 +507,8 @@ class ThreadsAdapter(
         // Verify composer opened
         val composerVisible = verifyComposer()
         if (!composerVisible) {
-            return recover("Composer failed to open after clicking trigger.")
+            recover("Composer failed to open after clicking trigger.")
+            return false
         }
 
         LocalActionLogger.log(
