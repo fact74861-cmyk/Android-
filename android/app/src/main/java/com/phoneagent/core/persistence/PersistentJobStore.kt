@@ -166,12 +166,12 @@ object JobStateTransitionValidator {
         }
 
         when (from) {
-            PersistentJobStatus.PENDING -> if (to in listOf(PersistentJobStatus.VALIDATING, PersistentJobStatus.READY, PersistentJobStatus.CANCELLED)) return
+            PersistentJobStatus.PENDING -> if (to in listOf(PersistentJobStatus.VALIDATING, PersistentJobStatus.READY, PersistentJobStatus.RUNNING, PersistentJobStatus.CANCELLED)) return
             PersistentJobStatus.VALIDATING -> if (to in listOf(PersistentJobStatus.READY, PersistentJobStatus.WAITING_FOR_APPROVAL, PersistentJobStatus.FAILED, PersistentJobStatus.CANCELLED)) return
             PersistentJobStatus.READY -> if (to in listOf(PersistentJobStatus.WAITING_FOR_APPROVAL, PersistentJobStatus.RUNNING, PersistentJobStatus.CANCELLED)) return
             PersistentJobStatus.WAITING_FOR_APPROVAL -> if (to in listOf(PersistentJobStatus.RUNNING, PersistentJobStatus.CANCELLED, PersistentJobStatus.READY)) return
             PersistentJobStatus.RUNNING -> if (to in listOf(PersistentJobStatus.PUBLISHED, PersistentJobStatus.PARTIALLY_PUBLISHED, PersistentJobStatus.FAILED, PersistentJobStatus.UNKNOWN, PersistentJobStatus.CANCELLED)) return
-            PersistentJobStatus.PARTIALLY_PUBLISHED -> if (to in listOf(PersistentJobStatus.PUBLISHED, PersistentJobStatus.FAILED, PersistentJobStatus.UNKNOWN, PersistentJobStatus.CANCELLED)) return
+            PersistentJobStatus.PARTIALLY_PUBLISHED -> if (to in listOf(PersistentJobStatus.RUNNING, PersistentJobStatus.PUBLISHED, PersistentJobStatus.FAILED, PersistentJobStatus.UNKNOWN, PersistentJobStatus.CANCELLED)) return
             PersistentJobStatus.PUBLISHED -> throw InvalidJobStateTransitionException(from.name, to.name, "Job", "PUBLISHED is immutable terminal state.")
             PersistentJobStatus.FAILED -> {
                 if (to == PersistentJobStatus.PUBLISHED) throw InvalidJobStateTransitionException(from.name, to.name, "Job", "Cannot jump from FAILED to PUBLISHED.")
@@ -193,7 +193,7 @@ object JobStateTransitionValidator {
         }
 
         when (from) {
-            PlatformStepStatus.PENDING -> if (to in listOf(PlatformStepStatus.VALIDATING, PlatformStepStatus.READY, PlatformStepStatus.WAITING_FOR_APPROVAL, PlatformStepStatus.CANCELLED)) return
+            PlatformStepStatus.PENDING -> if (to in listOf(PlatformStepStatus.VALIDATING, PlatformStepStatus.READY, PlatformStepStatus.WAITING_FOR_APPROVAL, PlatformStepStatus.RUNNING, PlatformStepStatus.CANCELLED)) return
             PlatformStepStatus.VALIDATING -> if (to in listOf(PlatformStepStatus.READY, PlatformStepStatus.WAITING_FOR_APPROVAL, PlatformStepStatus.FAILED, PlatformStepStatus.CANCELLED)) return
             PlatformStepStatus.READY -> if (to in listOf(PlatformStepStatus.WAITING_FOR_APPROVAL, PlatformStepStatus.RUNNING, PlatformStepStatus.CANCELLED)) return
             PlatformStepStatus.WAITING_FOR_APPROVAL -> if (to in listOf(PlatformStepStatus.RUNNING, PlatformStepStatus.CANCELLED)) return
